@@ -35,3 +35,22 @@ app.post("/api/notes", function(req,res){
     })
     
 });
+
+app.delete("/api/notes/:id", function(req, res) {
+    var collectID = req.params.id
+
+    for (i=0; i < jsondb.length; i++){
+        if(jsondb[i].id === collectID){
+            jsondb.splice(i,1);
+        }
+    }
+
+    fs.writeFile("./db/db.json", JSON.stringify(jsondb), function(err){
+        if (err) throw err;
+        res.json("Response")
+    })
+});
+
+app.listen(PORT, function() {
+    console.log("App listening on PORT " + PORT);
+});
