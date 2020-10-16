@@ -2,6 +2,7 @@ var express = require("express");
 var path = require("path");
 var fs = require("fs");
 var jsondb = require("./db/db.json");
+const { v4: uuidv4 } = require('uuid');
 const { json } = require("express");
 
 var app = express();
@@ -25,7 +26,7 @@ app.get("/api/notes", function(req,res){
 
 app.post("/api/notes", function(req,res){
     var newNote = req.body;
-    let noteID = (jsondb.length).toString();
+    let noteID = uuidv4()
     newNote.id = noteID;
     jsondb.push(newNote)
     
