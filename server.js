@@ -22,3 +22,16 @@ app.get("/notes", function(req,res){
 app.get("/api/notes", function(req,res){
     res.sendFile(path.join(__dirname, "/db/db.json"))
 });
+
+app.post("/api/notes", function(req,res){
+    var newNote = req.body;
+    let noteID = (jsondb.length).toString();
+    newNote.id = noteID;
+    jsondb.push(newNote)
+    
+    fs.writeFile("./db/db.json", JSON.stringify(jsondb), function(err){
+        if (err) throw err;
+        res.json("Response")
+    })
+    
+});
