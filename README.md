@@ -24,11 +24,12 @@ Run in terminal:
 
 ## Code Example
 First the required variables were grabbed along with creating our server and middleware handlers:
-```
+``` javaScript
 var express = require("express");
 var path = require("path");
 var fs = require("fs");
 var jsondb = require("./db/db.json");
+const { v4: uuidv4 } = require('uuid');
 
 var app = express();
 var PORT = process.env.PORT || 3000;
@@ -37,92 +38,51 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static("public"));
 ```
+<br>
+New notes are given an ID using the unique ID npm and posted to a json file.
 
-Each 
+``` javaScript
+app.post("/api/notes", function(req,res){
+    var newNote = req.body;
+    let noteID = uuidv4()
+    newNote.id = noteID;
+    jsondb.push(newNote)
+    
+    fs.writeFile("./db/db.json", JSON.stringify(jsondb), function(err){
+        if (err) throw err;
+        res.json("Response")
+    })
+    
+});
 ```
-function promptUser(){
-    return inquirer.prompt([
-        {
-            type: "input",
-            name: "author",
-            message: "What is the author's name?"
-        },
-        {
-            type: "input",
-            name: "username",
-            message: "What is your GitHub username?"
-        },
-        {
-            type: "input",
-            name: "email",
-            message: "What is your email address?"
+<br>
+In order to delete note ID must be matched with the ID being deleted, and splice() removes the note. Then our json file is rewritten without the deleted note.
 
+```JavaScript
+app.delete("/api/notes/:id", function(req, res) {
+    var collectID = req.params.id
 
-            etc...
-```
-Responses are placed in README template.
-```
-return`# ${response.title}  ${badge}
+    for (i=0; i < jsondb.length; i++){
+        if(jsondb[i].id === collectID){
+            jsondb.splice(i,1);
+        }
+    }
 
-${response.description}
-
-## Table of Contents:
-* [Installation](#installation)
-* [Usage](#usage)
-* [License](#license)
-* [Contributing](#contributing)
-* [Tests](#tests)
-* [Questions](#questions)
-
-### Installation:
-In order to install the necessary dependencies, open the console and run the following:
-
-\`\`\`${response.installations}\`\`\`
-
-### Usage:
-${response.usage}
-
-### License:
-This project is licensed under:
-
-${response.license}
-
-etc...
+    fs.writeFile("./db/db.json", JSON.stringify(jsondb), function(err){
+        if (err) throw err;
+        res.json("Response")
+    })
+});
 ```
 
-Template is written to "generatedREADME.md".
-```
-promptUser().then(function(response){
-    const markdown = generateMD(response);
-    return writeFileAsync("./generated/generatedREADME.md", markdown);
-}).then(function () {
-        console.log("Generating README.md ...");
-    }).catch(function(err){
-    console.log(err)
-})
+### Deployed Link
+https://quicknotesexpress.herokuapp.com/notes
 
-```
-
-
-### Installation:
-The README Generator repository already contains the dependencies you will need inside the "package.json" file.
-In order to install the necessary dependencies, just open the console and run the following:
-
-```npm install```
-
-### Usage:
-The generator will overwrite anything in the generatedREADME markdown file. Make sure to move any changes you may want to keep. For this reason it is generated in the folder "generated" to protect against accidentally overwriting user's current readme.
-
-### License:
-This project is licensed under:
-
-MIT
+### GitHub Repository
+https://github.com/joshglugatch/quick-notes-express
 
 ### Questions:
-If you have any questions contact me on [GitHub](https://github.com/joshglugatch) or contact 
-Josh Glugatch at joshglugatch@gmail.com
-
-![picture](https://github.com/joshglugatch.png?size=80)
+If you have any questions contact me on [GitHub.](https://github.com/joshglugatch) 
 
 <br>
 
